@@ -42,3 +42,6 @@ optional arguments:
   -h, --help  show this help message and exit
   --batch
 ```
+
+The three R scripts should be run from the directory containing the count.py
+output.
