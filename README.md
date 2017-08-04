@@ -3,13 +3,7 @@
 **Nicholas A. Yager** and **Matthew Taylor**
 
 This repository contains tools to analyze image stacks of flourescently-labeled
-epuloposcoium chromosomes. There are three main tools for this analysis.
-
-1. count.py: Localizes flourescent chromosomes in image stacks.
-2. classifier.R: Classifies cell position, identifies independent cells, and
-   calculates chromosome density.
-3. density\_analysis.R: Statistical analysis of chromosome densities by stage.
-4. plot\_generator.R: Script to generate figures.
+epuloposcoium chromosomes.
 
 ## Requirements:
 
@@ -19,6 +13,7 @@ The different tools require the following:
     * Numpy
     * Scipy
     * atexit
+    * Scikit Learn
 * R
     * rgl
     * cluster
@@ -29,19 +24,56 @@ The different tools require the following:
     * vioplot
     * ggplot2
 
-## Usage
+## Python Scripts
+
+### Localization
+
+The localization script identifies likely flourescently-tagged chromosomes in
+the image stack, clusters nearby voxels into single chromosomes, and saves the
+center-of-mass for each chromosome to a CSV file.
+
 ```
-usage: count.py [-h] [--batch] stackPath
+localization.py
 
-Count the number of chromosomes in a stack of dark field images.
+Usage:
+    localization.py <filename>
 
-positional arguments:
-  stackPath   The path to the directory containing the image stack.
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --batch
+Options:
+    filename    The name of the TIFF image stack to analyze.
 ```
 
-The three R scripts should be run from the directory containing the count.py
-output.
+### Density Analysis
+
+The density script processes a localiation file to identify real chromosomes
+from spatial noise in the images, calculates the convex hull of the cell from
+the chromosomes, and estimates the chromosome density of the cell.
+
+```
+density_analysis.py
+
+Usage:
+    density_analysis.py <filename> <output_file>
+
+Options:
+    filename    The name of the localized chromosome CSV file to process.
+    output_file The name of the density analysis file to output.
+```
+
+## R Scripts
+
+### Daughter Analysis
+An R script to assess the differences in chromosome counts between different
+offspring cells within a maternal cell. This is used to establish the relative
+difference in densities between sibling cells.
+
+### Density Analysis
+The density analysis R script is used to generate figures from the CSV output
+from the density analysis python script.
+
+### Distance Plotter
+An R script to generate top-down heat maps of the average distances between
+chromosomes for a given stack.
+
+### Plot Generator
+A generic R script to generate top-down figures of the localized chromosomes
+for all image stacks.

@@ -11,18 +11,21 @@ for (index in 1:length(packages)){
   }
 }
 
-#data <- read.csv("densities.csv")
+data <- read.csv("data/whole_cell_densities.csv")
+colnames(data) <- c("analysis", "cell", "chromosomes", "volume", "density")
 
-data1 <- read.csv("A_Early stages of daughter cell formation//densities_raw.csv")
-data2 <- read.csv("B_Fully engulfed, small daughter cells//densities_raw.csv")
-data3 <- read.csv('C_Fully engulfed, full length daughter cells//densities_raw.csv')
+# data <- data[-5,]
 
-data <- rbind(data1,data2)
-data <- rbind(data,data3)
+# data1 <- read.csv("A_Early stages of daughter cell formation//densities_raw.csv")
+# data2 <- read.csv("B_Fully engulfed, small daughter cells//densities_raw.csv")
+# data3 <- read.csv('C_Fully engulfed, full length daughter cells//densities_raw.csv')
+#
+# data <- rbind(data1,data2)
+# data <- rbind(data,data3)
 
 stageStrings = c("A","B","C")
 
-data <- read.csv("aggregate_data.csv")
+#data <- read.csv("aggregate_data.csv")
 
 # Separate data by life cycle stage
 stages = c()
@@ -34,15 +37,16 @@ for (row in 1:nrow(data)) {
 data <- cbind(data, stage = stages)
 stages = split(data, data$stage)
 
+data <- data[which(data$chromosomes > 300),]
 
 for (index in 1:3) {
-print(paste(index,"-- mean:", 1/mean(stages[[index]]$density),
-            "sd:",1/sd(stages[[index]]$density)))
+    print(paste(index,"-- mean:", mean(stages[[index]]$density),
+             "median:", median(stages[[index]]$density),
+            "sd:",sd(stages[[index]]$density)))
+
 }
 
-vioplot(subset(data, stage=="1")$density,
-        subset(data, stage=="2")$density,
-        subset(data, stage=="3")$density,
+vioplot(subset(data, stage=="1")$density,subset(data, stage=="2")$density,subset(data, stage=="3")$density,
         col="lightblue",
         names = stageStrings)
 title( ylab = "Chromosomes per Cubic Micrometer",
@@ -86,4 +90,4 @@ abline(model,col="red")
 text(120000,1000,paste("Density:",round(model$coefficients[1],4),"genomes per um^3."))
 cat(paste("Density:",model$coefficients[1],"genomes per um^3."))
 
-write.csv(data,"analysis.csv",row.names=F)
+#write.csv(data,"analysis.csv",row.names=F)
